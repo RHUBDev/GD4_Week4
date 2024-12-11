@@ -15,6 +15,8 @@ public class SpawnManager : MonoBehaviour
     private bool spawnedtruck = false;
     private GameObject truckobj;
     private int trucksspawned = 0;
+    public GameObject coinprefab;
+    private float coinheight = 5.787f;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +38,12 @@ public class SpawnManager : MonoBehaviour
                 rot = Quaternion.Euler(90, 0, 0);
                 spawnloc2 += new Vector3(0, 0.467f, -0.66f);
             }
-            Instantiate(obstacles[obs], spawnloc2, rot);
+            GameObject go = Instantiate(obstacles[obs], spawnloc2, rot);
+            if (obs == 0)
+            {
+                GameObject coin1 = Instantiate(coinprefab, spawnloc2 + Vector3.up * coinheight, Quaternion.Euler(90, 180, 0));
+                coin1.GetComponent<Coin>().followobject = go.transform;
+            }
             obsspawned += 1;
         }
     }
@@ -55,6 +62,7 @@ public class SpawnManager : MonoBehaviour
                     Quaternion rot = Quaternion.Euler(0, 90, 0);
                     Vector3 spawnloc2 = new Vector3(26, 0, 0);
                     truckobj = Instantiate(trucks[trucksspawned], spawnloc2, rot);
+                    //set number of the next truck
                     trucksspawned += 1;
                     if (trucksspawned >= trucks.Length)
                     {
@@ -64,6 +72,7 @@ public class SpawnManager : MonoBehaviour
             }
             else if (!truckobj)
             {
+                //once truck destroyed, start spawning the next wave of obstacles
                 obsspawned = 0;
                 spawnedtruck = false;
                 InvokeRepeating("SpawnObstacle", 2f, Random.Range(intervalmin, intervalmax));

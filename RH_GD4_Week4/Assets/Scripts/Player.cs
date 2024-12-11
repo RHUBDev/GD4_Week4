@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -12,12 +13,15 @@ public class Player : MonoBehaviour
     public GameObject splosion;
     public bool playing = true;
     public Animator animator;
+    private int coins = 0;
+    public TMP_Text scoretext;
+    public TMP_Text endtext;
 
     // Start is called before the first frame update
     void Start()
     {
+        //Increase the game's gravity
         Physics.gravity *= gravityMultiplier;
-        animator.Play("Run");
     }
 
     // Update is called once per frame
@@ -43,7 +47,7 @@ public class Player : MonoBehaviour
         //Jump function
         rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         grounded = false;
-        animator.Play("Running_Jump");
+        animator.SetTrigger("Jump_trig");
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -53,17 +57,14 @@ public class Player : MonoBehaviour
             if (collision.transform.CompareTag("Ground"))
             {
                 //if hit ground, set grounded to true
-                animator.Play("Run");
                 grounded = true;
             }
             else if (collision.collider.transform.CompareTag("Barrel"))
             {
-                Debug.Log("hit barrel");
                 //if barrel, make explosion, and kill player
                 Instantiate(splosion, collision.collider.transform.position, Quaternion.identity);
                 Destroy(collision.collider.gameObject);
-                playing = false;
-                animator.Play("Death_01");
+                DoDie();
             }
             else if (collision.transform.CompareTag("Obstacle"))
             {
@@ -74,12 +75,10 @@ public class Player : MonoBehaviour
             {
                 if (collision.contacts[0].normal.y > 0)
                 {
-                    //if hit top part of badguy, kill him and set grounded
+                    //if hit top part of badguy, kill him and auto-jump
                     BadGuy badguy = collision.collider.transform.GetComponent<BadGuy>();
                     badguy.DoDie();
                     Jump();
-                    //grounded = true;
-                    //animator.Play("Run");
                 }
                 else
                 {
@@ -108,7 +107,8 @@ public class Player : MonoBehaviour
     {
         //Kill player
         playing = false;
-        animator.Play("Death_01");
+        animator.SetBool("Death_b", true);
+        ShowScore();
     }
 
     void Restart()
@@ -116,5 +116,37 @@ public class Player : MonoBehaviour
         //Restart game
         Physics.gravity /= gravityMultiplier;
         SceneManager.LoadScene("MyLevel1");
+    }
+
+    public void AddCoin()
+    {
+        //Collected coin
+        coins += 1;
+        scoretext.text = "Coins: " + coins;
+    }
+
+    private void ShowScore()
+    {
+        int highscore = 0;
+
+        //Get previous highscore
+        if (PlayerPrefs.HasKey("HighScore"))
+        {
+            highscore = PlayerPrefs.GetInt("HighScore");
+        }
+        //Show UI for win/draw/loss
+        if(coins > highscore)
+        {
+            endtext.text = "Congrats!\nBeat high score by " + (coins - highscore).ToString("n0") + "!";
+            PlayerPrefs.SetInt("HighScore", coins);
+        }
+        else if(coins == highscore)
+        {
+            endtext.text = "Unlucky!\nEqualled high score";
+        }
+        else
+        {
+            endtext.text = "Unlucky!\nLost high score by " + (highscore - coins).ToString("n0");
+        }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Obstacle : MonoBehaviour
 {
     private float moveSpeed = 10;
+    private float deadMoveSpeed = 2;
     private float rotateSpeed = 140;
     private bool isbarrel = false;
     private Player player;
@@ -46,13 +47,29 @@ public class Obstacle : MonoBehaviour
                     //if barrel, rotate too
                     transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
                 }
-
-                if (transform.position.x < -5)
-                {
-                    //destroy obstacle if out of screen bounds
-                    Destroy(gameObject);
-                }
             }
+            else if(isbarrel)
+            {
+                //if gameover, keep barrel rotating, and moving slower
+                transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
+                moveSpeed = deadMoveSpeed;
+                transform.Translate(Vector3.left * moveSpeed * Time.deltaTime, Space.World);
+            }
+        }
+        if (transform.position.x < -5)
+        {
+            //destroy obstacle if out of screen bounds
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //if barrel hit another obstacle, stop moving and rotating it 
+        if (collision.transform.CompareTag("Obstacle"))
+        {
+            deadMoveSpeed = 0;
+            rotateSpeed = 0;
         }
     }
 }

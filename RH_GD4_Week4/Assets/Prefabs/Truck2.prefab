@@ -62,6 +62,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rig: {fileID: 8165983011862726151}
   splosionPrefab: {fileID: 131164, guid: 001bc1aec1450c14b97bd6a7c6b5cea2, type: 3}
+  truckbody: {fileID: 5985624607991435457}
+  coinprefab: {fileID: 7705600670801147632, guid: b7d2af3cfdd04f7419ea4c3e5098bd83,
+    type: 3}
 --- !u!65 &3607058871526525259
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -875,6 +878,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 4a7c3ad7168bb834b87a91e3f94ad3d6, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 298ed1b732ca3ce489431a06eb5025bc, type: 2}
     - target: {fileID: 13751340, guid: 4a7c3ad7168bb834b87a91e3f94ad3d6, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -925,6 +932,8 @@ MonoBehaviour:
   animator: {fileID: 1529908211989591770}
   hand: {fileID: 1529908211979737370}
   barrel: {fileID: 1455213578264985939, guid: 647dd5ce221086d43a7e260d4432aa6b, type: 3}
+  coinprefab: {fileID: 7705600670801147632, guid: b7d2af3cfdd04f7419ea4c3e5098bd83,
+    type: 3}
 --- !u!136 &9124424597257548855
 CapsuleCollider:
   m_ObjectHideFlags: 0

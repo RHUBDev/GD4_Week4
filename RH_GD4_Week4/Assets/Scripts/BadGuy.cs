@@ -14,34 +14,25 @@ public class BadGuy : MonoBehaviour
     private GameObject handbarrel;
     private bool donethrow = false;
     private float barrelresettime = -0.812844f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //Play idle animation
-        animator.Play("Idle");
-    }
+    public GameObject coinprefab;
+    private int coinstospawn = 3;
+    private float cointime = 0.1f;
 
     // Update is called once per frame
     void Update()
     {
         if (alive)
         {
-            //count down time till next barrel
-            //if (barreltimer < barreltime)
-            //{
-                barreltimer += Time.deltaTime;
-            //}
-            //else
-            //{
+            barreltimer += Time.deltaTime;
+            //grab barrel and start throw animation
             if (barreltimer > barreltime && !handbarrel)
             {
-                Debug.Log("Time = " + barreltimer);
                 handbarrel = Instantiate(barrel, hand.transform.position, hand.transform.rotation, hand);
                 animator.Play("GrenadeThrow");
                 barreltimer = barreltime; 
                 donethrow = false;
             }
+            //release barrel and set the barrel's setings
             if (barreltimer > barrelthrowtime && !donethrow)
             {
                 donethrow = true;
@@ -55,9 +46,9 @@ public class BadGuy : MonoBehaviour
                 Rigidbody barrelrig = handbarrel.AddComponent<Rigidbody>();
                 barrelrig.isKinematic = false;
                 barrelrig.constraints = RigidbodyConstraints.FreezeRotationX;
-                //barrelrig.constraints = RigidbodyConstraints.FreezeRotation;
                 barrelrig.constraints = RigidbodyConstraints.FreezePositionZ;
                 barrelrig.constraints = RigidbodyConstraints.FreezePositionX;
+                barrelrig.collisionDetectionMode = CollisionDetectionMode.Continuous;
             }
             //}
         }
@@ -67,7 +58,21 @@ public class BadGuy : MonoBehaviour
     {
         //Kill BadGuy
         alive = false;
-        animator.Play("Death_01");
+        animator.SetBool("Death_b", true);
         barreltimer = 0;
+        StartCoroutine(SpawnCoins());
+    }
+
+    IEnumerator SpawnCoins()
+    {
+        for (int i = 0; i < coinstospawn; i++)
+        {
+            Debug.Log("BadGuy Coin");
+            //Spawn the correct number of coins
+            GameObject coin = Instantiate(coinprefab, transform.position, Quaternion.Euler(90, 180, 0));
+            coin.GetComponent<Coin>().TriggerCoin();
+            yield return new WaitForSeconds(cointime);
+        }
+        yield return null;
     }
 }
