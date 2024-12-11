@@ -7,6 +7,9 @@ TagManager:
   - Ground
   - Obstacle
   - Barrel
+  - Fire
+  - BadGuy
+  - Truck
   layers:
   - Default
   - TransparentFX
@@ -14,7 +17,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - FireLayer
   - 
   - 
   - 

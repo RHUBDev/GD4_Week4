@@ -4,25 +4,70 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    private float interval = 2f;
+    private float intervalmin = 0.9f;
+    private float intervalmax = 1.3f;
     public GameObject[] obstacles;
     private Vector3 spawnloc = new Vector3(20, 0, 0);
+    public Player player;
+    private int obsspawned = 0;
+    private int obstowait = 7;
+    public GameObject[] trucks;
+    private bool spawnedtruck = false;
+    private GameObject truckobj;
+    private int trucksspawned = 0;
+
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("SpawnObstacle", interval, interval);
+        //spawn obstacles
+        InvokeRepeating("SpawnObstacle", 2f, Random.Range(intervalmin, intervalmax));
     }
 
     private void SpawnObstacle()
     {
-        int obs = Random.Range(0, obstacles.Length);
-        Quaternion rot = Quaternion.identity;
-        Vector3 spawnloc2 = spawnloc;
-        if (obs == 0)
+        //if still playing, spawn random obstacle
+        if (player.playing)
         {
-            rot = Quaternion.Euler(90, 0, 0);
-            spawnloc2 += new Vector3(0, 0.467f, -0.66f);
+            int obs = Random.Range(0, obstacles.Length);
+            Quaternion rot = Quaternion.Euler(0, -90, 0);
+            Vector3 spawnloc2 = spawnloc;
+            if (obs == 0)
+            {
+                rot = Quaternion.Euler(90, 0, 0);
+                spawnloc2 += new Vector3(0, 0.467f, -0.66f);
+            }
+            Instantiate(obstacles[obs], spawnloc2, rot);
+            obsspawned += 1;
         }
-        Instantiate(obstacles[obs], spawnloc2, rot);
+    }
+
+    private void Update()
+    {
+        if (player.playing)
+        {
+            if (!spawnedtruck)
+            {
+                if (obsspawned >= obstowait)
+                {
+                    //after 7 obstacles, spawn truck, and cancel invoke
+                    spawnedtruck = true;
+                    CancelInvoke();
+                    Quaternion rot = Quaternion.Euler(0, 90, 0);
+                    Vector3 spawnloc2 = new Vector3(26, 0, 0);
+                    truckobj = Instantiate(trucks[trucksspawned], spawnloc2, rot);
+                    trucksspawned += 1;
+                    if (trucksspawned >= trucks.Length)
+                    {
+                        trucksspawned = 0;
+                    }
+                }
+            }
+            else if (!truckobj)
+            {
+                obsspawned = 0;
+                spawnedtruck = false;
+                InvokeRepeating("SpawnObstacle", 2f, Random.Range(intervalmin, intervalmax));
+            }
+        }
     }
 }

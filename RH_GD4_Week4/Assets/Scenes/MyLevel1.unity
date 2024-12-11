@@ -275,6 +275,11 @@ MonoBehaviour:
   - {fileID: 1223864504749757924, guid: fd03df344b1cd1f4cb0d2318ee4a2d49, type: 3}
   - {fileID: 4106020233586259316, guid: ea41f536e381c924fa94101ebe45f08d, type: 3}
   - {fileID: 5536945658683503143, guid: 0e766e7f3e1400744a0b745f88167b0e, type: 3}
+  player: {fileID: 1892688666}
+  trucks:
+  - {fileID: 3956982045435835212, guid: b5bb4a4d8fb68eb429064e55b38febfc, type: 3}
+  - {fileID: 1234936340028763567, guid: 36a65c55daf327a4fb3472f17a50bec6, type: 3}
+  - {fileID: 4739629029905195497, guid: 8077c7a2d89b5a24c9c6cdbb06cd5bbc, type: 3}
 --- !u!4 &174945836
 Transform:
   m_ObjectHideFlags: 0
@@ -480,6 +485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  player: {fileID: 0}
 --- !u!1 &1445405194
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,6 +606,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: 4b1af49d1ff675b4bba7eb29f90c2bc9, type: 2}
+  player: {fileID: 1892688666}
 --- !u!1001 &1892688663
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -654,6 +661,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f147a01ef442b2345a3546109476c690, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bcb9744fe4deaab4e99fcd5cf706e6c7, type: 2}
+    - target: {fileID: 9500000, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -717,8 +732,9 @@ MonoBehaviour:
   jumpForce: 200
   rig: {fileID: 1892688669}
   gravityMultiplier: 5
-  splosion: {fileID: 2630815748524575241, guid: cb7cd9b0c56a24d49a40784bd3203ae6,
-    type: 3}
+  splosion: {fileID: 131164, guid: 3c5f4e32698bdb04eaed647f60310510, type: 3}
+  playing: 1
+  animator: {fileID: 1892688670}
 --- !u!54 &1892688669
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -746,6 +762,12 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 1
+--- !u!95 &1892688670 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: f147a01ef442b2345a3546109476c690,
+    type: 3}
+  m_PrefabInstance: {fileID: 1892688663}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2014335011
 GameObject:
   m_ObjectHideFlags: 0
