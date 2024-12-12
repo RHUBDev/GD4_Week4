@@ -7,13 +7,13 @@ public class Coin : MonoBehaviour
     //public GameObject player;
     private float stopDistance = 0.3f;
     private float scaletimer = 0f;
-    private float scaletime = 1f;
+    private float scaletime = 0.5f;
     private float rotatespeed = 180f;
     private bool triggered = false;
     public Transform followobject;
     private float coinheight = 5.32f;
     private float coinMoveSpeed = 10f;
-    private float hitCoinBackMoveSpeed = 2f;
+    private float hitCoinBackMoveSpeed = 30f;
 
     private void Update()
     {
@@ -30,7 +30,7 @@ public class Coin : MonoBehaviour
         else if (triggered)
         {
             //if moving to player, also move in the opposite direction, as it seems to cause a cool curved trajectory effect
-            transform.Translate(Vector3.left * coinMoveSpeed * Time.deltaTime, Space.World);
+            transform.Translate(Vector3.left * hitCoinBackMoveSpeed * Time.deltaTime, Space.World);
         }
         //Rotate the coin
         transform.Rotate(0, 0, rotatespeed * Time.deltaTime);
@@ -41,6 +41,7 @@ public class Coin : MonoBehaviour
         //if player hits coin, trigger coin's movement to player
         if (other.gameObject.CompareTag("Player") && !triggered)
         {
+            followobject = null;
             triggered = true;
             Player player = other.gameObject.GetComponent<Player>();
             if (player)
@@ -52,19 +53,22 @@ public class Coin : MonoBehaviour
 
     IEnumerator MoveCoin(Player player)
     {
+        player.DoCoinSound();
         //Modified from the Truck's 'CrushTruck' function Lerp
-        Vector3 newscale = transform.localScale / 3f;
+        Vector3 newscale = transform.localScale / 2f;
         Vector3 originalscale = transform.localScale;
         Vector3 originalposition = transform.position;
-        while (((player.transform.position + Vector3.up * 1.5f) - transform.position).magnitude > stopDistance) 
+        while (scaletimer< scaletime)//((player.transform.position + Vector3.up * 1.5f) - transform.position).magnitude > stopDistance) 
         {
             //Scale coin and move towards Player
             transform.localScale = Vector3.Lerp(transform.localScale, newscale, scaletimer / scaletime);
             transform.position = Vector3.Lerp(transform.position, (player.transform.position + Vector3.up * 1.5f), scaletimer / scaletime);
             scaletimer += Time.deltaTime;
+            Debug.Log("0 + " + scaletimer);
             yield return null;
         }
-        
+
+        Debug.Log("1");
         //Add coin to player and destroy coin
         player.AddCoin();
         Destroy(gameObject);

@@ -11,6 +11,7 @@ public class Background : MonoBehaviour
 
     private void Start()
     {
+        mat.SetTextureOffset("_BaseMap", new Vector2(0f, 0f));
         //scrollspeed set by 1 / (width of quad / speed of obstacles(10))
         scrollspeed = 1 / 11.28f;
     }

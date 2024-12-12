@@ -7,8 +7,11 @@ public class Obstacle : MonoBehaviour
     private float moveSpeed = 10;
     private float deadMoveSpeed = 2;
     private float rotateSpeed = 140;
+
+    private float rotateSpeed2 = 280;
     private bool isbarrel = false;
     private Player player;
+    private Barrel barrel;
 
     private void Start()
     {
@@ -19,6 +22,7 @@ public class Obstacle : MonoBehaviour
             isbarrel = true;
             moveSpeed = 12f;
         }
+        barrel = GetComponent<Barrel>();
     }
 
     private void OnEnable()
@@ -42,18 +46,26 @@ public class Obstacle : MonoBehaviour
                 //moveSpeed obstacle forwards
                 transform.Translate(Vector3.left * moveSpeed * Time.deltaTime, Space.World);
 
-                if (isbarrel)
+                if (isbarrel && !barrel)
                 {
                     //if barrel, rotate too
                     transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
                 }
+                else if(isbarrel &&barrel)
+                {
+                    transform.Rotate(Vector3.up * rotateSpeed2 * Time.deltaTime);
+                }
             }
-            else if(isbarrel)
+            else if(isbarrel && !barrel)
             {
                 //if gameover, keep barrel rotating, and moving slower
                 transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
                 moveSpeed = deadMoveSpeed;
                 transform.Translate(Vector3.left * moveSpeed * Time.deltaTime, Space.World);
+            }
+            else if (isbarrel && barrel)
+            {
+                transform.Rotate(Vector3.up * rotateSpeed2 * Time.deltaTime);
             }
         }
         if (transform.position.x < -5)

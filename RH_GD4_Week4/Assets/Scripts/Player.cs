@@ -11,11 +11,17 @@ public class Player : MonoBehaviour
     private bool grounded = true;
     public float gravityMultiplier = 5f;
     public GameObject splosion;
-    public bool playing = true;
+    public bool playing = false;
     public Animator animator;
     private int coins = 0;
     public TMP_Text scoretext;
     public TMP_Text endtext;
+    public ParticleSystem dirt;
+    public AudioSource crash;
+    public AudioSource jump;
+    public AudioSource coinsound;
+    private bool started = false;
+    private float walkspeed = 2f;
 
     // Start is called before the first frame update
     void Start()
@@ -27,23 +33,48 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playing)
+        if (started)
         {
-            //Jump if grounded
-            if (Input.GetKeyDown(KeyCode.Space) && grounded)
+            if (playing)
             {
-                Jump();
+                //Jump if grounded
+                if (Input.GetKeyDown(KeyCode.Space) && grounded)
+                {
+                    Jump();
+                }
+            }
+            //Restart Level
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Restart();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                SceneManager.LoadScene("Menu");
             }
         }
-        //Restart Level
-        if(Input.GetKeyDown(KeyCode.R))
+        else
         {
-            Restart();
+            if (transform.position.x < 2f)
+            {
+                transform.Translate(Vector3.right * walkspeed * Time.deltaTime, Space.World);
+            }
+            else
+            {
+                transform.position = new Vector3(2, 0, 0);
+                animator.SetFloat("Speed_f", 1f);
+                started = true;
+                playing = true;
+                dirt.Play();
+            }
         }
     }
 
     void Jump()
     {
+        dirt.Stop();
+        jump.Play();
         //Jump function
         rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         grounded = false;
@@ -56,6 +87,7 @@ public class Player : MonoBehaviour
         {
             if (collision.transform.CompareTag("Ground"))
             {
+                dirt.Play();
                 //if hit ground, set grounded to true
                 grounded = true;
             }
@@ -93,6 +125,7 @@ public class Player : MonoBehaviour
                     //if landed on truck, set grounded to true
                     animator.Play("Run");
                     grounded = true;
+                    dirt.Play();
                 }
                 else
                 {
@@ -108,6 +141,8 @@ public class Player : MonoBehaviour
         //Kill player
         playing = false;
         animator.SetBool("Death_b", true);
+        crash.Play();
+        dirt.Stop();
         ShowScore();
     }
 
@@ -116,6 +151,11 @@ public class Player : MonoBehaviour
         //Restart game
         Physics.gravity /= gravityMultiplier;
         SceneManager.LoadScene("MyLevel1");
+    }
+
+    public void DoCoinSound()
+    {
+        coinsound.Play();
     }
 
     public void AddCoin()
